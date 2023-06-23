@@ -1,0 +1,98 @@
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body body style="margin: 0">
+	<canvas width="auto" height="auto" id="canvas"></canvas>
+	<script>
+		const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let cw = window.innerWidth;
+let ch = window.innerHeight;
+
+let charArr = [
+  "フ",
+  "ジ",
+  "タ",
+  "リ",
+  "ン",
+  "タ",
+  "ロ",
+  "ウ",
+  "ノ",
+  "ポ",
+  "ー",
+  "ト",
+  "フ",
+  "ォ",
+  "リ",
+  "オ"
+];
+
+let maxCharCount = 100;
+let fallingCharArr = [];
+let fontSize = 12;
+let maxColumns = cw / fontSize;
+canvas.width = cw;
+canvas.height = ch;
+
+let frames = 0;
+
+class FallingChar {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  draw(ctx) {
+    this.value =
+      charArr[Math.floor(Math.random() * (charArr.length - 1))].toUpperCase();
+    this.speed = (Math.random() * fontSize * 3) / 3 + (fontSize * 3) / 7;
+
+    ctx.fillStyle = "rgba(0,255,255)";
+    ctx.font = fontSize + "px san-serif";
+
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(Math.PI);
+    ctx.fillText(this.value, 0, 0);
+    ctx.restore();
+
+    this.y += this.speed;
+
+    if (this.y > ch) {
+      this.y = (Math.random() * ch) / 2 - 50;
+      this.x = Math.floor(Math.random() * maxColumns) * fontSize;
+      this.speed = (-Math.random() * fontSize * 2) / 4 + (fontSize * 2) / 4;
+    }
+  }
+}
+
+let update = () => {
+  if (fallingCharArr.length < maxCharCount) {
+    let fallingChar = new FallingChar(
+      Math.floor(Math.random() * maxColumns) * fontSize,
+      (Math.random() * ch) / 2 - 50
+    );
+    fallingCharArr.push(fallingChar);
+  }
+  ctx.fillStyle = "rgba(0,0,0,0.05)";
+  ctx.fillRect(0, 0, cw, ch);
+  for (let i = 0; i < fallingCharArr.length && frames % 2 == 0; i++) {
+    fallingCharArr[i].draw(ctx);
+  }
+
+  requestAnimationFrame(update);
+  frames++;
+};
+
+update();
+	</script>
+</body>
+
+</html>
